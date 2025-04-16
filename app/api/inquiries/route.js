@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
-import connectDB from '../../../lib/mongodb';
-import Inquiry from '../../../models/Inquiry';
+import connectDB from '@/app/lib/mongodb';
+import Inquiry from '@/app/models/Inquiry';
 
 export async function POST(req) {
   try {
