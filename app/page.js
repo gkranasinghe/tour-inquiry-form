@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+'use client';
 
-function App() {
+import { useState } from 'react';
+
+export default function Home() {
   const [formData, setFormData] = useState({
     name: '',
     arrivalDate: '',
@@ -33,10 +35,36 @@ function App() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Here you can add your form submission logic
+    try {
+      const response = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) throw new Error('Failed to submit inquiry');
+
+      alert('Inquiry submitted successfully!');
+      setFormData({
+        name: '',
+        arrivalDate: '',
+        departureDate: '',
+        numberOfNights: '',
+        numberOfAdults: '',
+        numberOfKids: '',
+        kidsAges: {
+          below12: 0,
+          below5: 0,
+          below2: 0
+        }
+      });
+    } catch (error) {
+      alert('Error submitting inquiry. Please try again.');
+    }
   };
 
   return (
@@ -48,7 +76,6 @@ function App() {
               <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
                 <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">Sri Lanka Travel Inquiry</h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Basic Information */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Name</label>
                     <input
@@ -61,7 +88,6 @@ function App() {
                     />
                   </div>
 
-                  {/* Date Selection */}
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Arrival Date</label>
@@ -87,7 +113,6 @@ function App() {
                     </div>
                   </div>
 
-                  {/* Number of Nights */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Number of Nights</label>
                     <input
@@ -101,7 +126,6 @@ function App() {
                     />
                   </div>
 
-                  {/* Number of People */}
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                       <label className="block text-sm font-medium text-gray-700">Number of Adults</label>
@@ -128,7 +152,6 @@ function App() {
                     </div>
                   </div>
 
-                  {/* Kids Age Groups */}
                   {formData.numberOfKids > 0 && (
                     <div className="space-y-4">
                       <h3 className="text-lg font-medium text-gray-700">Ages of Kids</h3>
@@ -170,7 +193,6 @@ function App() {
                     </div>
                   )}
 
-                  {/* Submit Button */}
                   <div className="pt-4">
                     <button
                       type="submit"
@@ -187,6 +209,4 @@ function App() {
       </div>
     </div>
   );
-}
-
-export default App;
+} 
