@@ -5,7 +5,7 @@ import { useState } from 'react';
 export default function Home() {
   const [formData, setFormData] = useState({
     name: '',
-    arrivalDate: '',
+    arrivalDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
     departureDate: '',
     numberOfNights: '',
     numberOfAdults: '',
@@ -26,6 +26,15 @@ export default function Home() {
           ...prev.kidsAges,
           [name.replace('kids', '').toLowerCase()]: parseInt(value) || 0
         }
+      }));
+    } else if (name === 'arrivalDate') {
+      const newArrivalDate = new Date(value);
+      const currentDepartureDate = new Date(formData.departureDate);
+      
+      setFormData(prev => ({
+        ...prev,
+        [name]: value,
+        departureDate: currentDepartureDate < newArrivalDate ? value : prev.departureDate
       }));
     } else {
       setFormData(prev => ({
@@ -51,7 +60,7 @@ export default function Home() {
       alert('Inquiry submitted successfully!');
       setFormData({
         name: '',
-        arrivalDate: '',
+        arrivalDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
         departureDate: '',
         numberOfNights: '',
         numberOfAdults: '',
@@ -96,6 +105,7 @@ export default function Home() {
                         name="arrivalDate"
                         value={formData.arrivalDate}
                         onChange={handleInputChange}
+                        min={new Date().toISOString().split('T')[0]}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
                         required
                       />
@@ -107,6 +117,7 @@ export default function Home() {
                         name="departureDate"
                         value={formData.departureDate}
                         onChange={handleInputChange}
+                        min={formData.arrivalDate}
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
                         required
                       />
