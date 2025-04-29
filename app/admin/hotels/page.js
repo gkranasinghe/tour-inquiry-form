@@ -76,10 +76,13 @@ export default function HotelsPage() {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) throw new Error('Failed to create hotel');
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create hotel');
+      }
 
-      const newHotel = await response.json();
-      setHotels(prev => [newHotel, ...prev]);
+      setHotels(prev => [data, ...prev]);
       setFormData({
         location: '',
         hotelName: '',
@@ -93,7 +96,8 @@ export default function HotelsPage() {
       });
       alert('Hotel added successfully!');
     } catch (error) {
-      alert('Error adding hotel. Please try again.');
+      console.error('Error adding hotel:', error);
+      alert(`Error adding hotel: ${error.message}`);
     }
   };
 
