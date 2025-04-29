@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { FaSearch, FaCalendarAlt, FaUser } from 'react-icons/fa';
 
 export default function Home() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,8 @@ export default function Home() {
       below2: 0
     }
   });
+
+  const [showGuestOptions, setShowGuestOptions] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -71,151 +74,155 @@ export default function Home() {
           below2: 0
         }
       });
+      setShowGuestOptions(false);
     } catch (error) {
       alert('Error submitting inquiry. Please try again.');
     }
   };
 
+  const totalGuests = parseInt(formData.numberOfAdults || 0) + parseInt(formData.numberOfKids || 0);
+  const guestSummary = `${totalGuests} guest${totalGuests !== 1 ? 's' : ''}`;
+
   return (
-    <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
-      <div className="relative py-3 sm:max-w-xl sm:mx-auto">
-        <div className="relative px-4 py-10 bg-white mx-8 md:mx-0 shadow rounded-3xl sm:p-10">
-          <div className="max-w-md mx-auto">
-            <div className="divide-y divide-gray-200">
-              <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-                <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">Sri Lanka Travel Inquiry</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Name</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                      required
-                    />
-                  </div>
+    <div className="min-h-screen bg-gray-50 py-20">
+      <div className="max-w-5xl mx-auto px-4">
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-900">Plan Your Sri Lanka Adventure</h1>
+        
+        <div className="bg-white rounded-full shadow-lg p-2 max-w-4xl mx-auto">
+          <form onSubmit={handleSubmit} className="flex items-center">
+            {/* Name Input */}
+            <div className="flex-1 min-w-0 px-4 border-r border-gray-200">
+              <label className="block text-xs font-medium text-gray-700">Your Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                className="block w-full border-0 p-2 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                placeholder="Enter your name"
+                required
+              />
+            </div>
 
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Arrival Date</label>
-                      <input
-                        type="date"
-                        name="arrivalDate"
-                        value={formData.arrivalDate}
-                        onChange={handleInputChange}
-                        min={new Date().toISOString().split('T')[0]}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Departure Date</label>
-                      <input
-                        type="date"
-                        name="departureDate"
-                        value={formData.departureDate}
-                        onChange={handleInputChange}
-                        min={formData.arrivalDate}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                        required
-                      />
-                    </div>
-                  </div>
+            {/* Date Range */}
+            <div className="flex-1 min-w-0 px-4 border-r border-gray-200">
+              <label className="block text-xs font-medium text-gray-700">Dates</label>
+              <div className="flex items-center space-x-2">
+                <FaCalendarAlt className="text-gray-400" />
+                <input
+                  type="date"
+                  name="arrivalDate"
+                  value={formData.arrivalDate}
+                  onChange={handleInputChange}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="block w-full border-0 p-2 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                  required
+                />
+                <span className="text-gray-400">→</span>
+                <input
+                  type="date"
+                  name="departureDate"
+                  value={formData.departureDate}
+                  onChange={handleInputChange}
+                  min={formData.arrivalDate}
+                  className="block w-full border-0 p-2 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm"
+                  required
+                />
+              </div>
+            </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Number of Nights</label>
-                    <input
-                      type="number"
-                      name="numberOfNights"
-                      value={formData.numberOfNights}
-                      onChange={handleInputChange}
-                      min="1"
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                      required
-                    />
-                  </div>
+            {/* Guests */}
+            <div className="flex-1 min-w-0 px-4 relative">
+              <label className="block text-xs font-medium text-gray-700">Guests</label>
+              <button
+                type="button"
+                onClick={() => setShowGuestOptions(!showGuestOptions)}
+                className="flex items-center w-full p-2 text-left text-gray-900 hover:bg-gray-50 rounded-md"
+              >
+                <FaUser className="text-gray-400 mr-2" />
+                <span>{guestSummary}</span>
+              </button>
 
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Number of Adults</label>
+              {showGuestOptions && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg p-4 border border-gray-200 z-10">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm text-gray-700">Adults</label>
                       <input
                         type="number"
                         name="numberOfAdults"
                         value={formData.numberOfAdults}
                         onChange={handleInputChange}
                         min="1"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                        className="w-20 p-1 border rounded-md"
                         required
                       />
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Number of Kids</label>
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm text-gray-700">Kids</label>
                       <input
                         type="number"
                         name="numberOfKids"
                         value={formData.numberOfKids}
                         onChange={handleInputChange}
                         min="0"
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                        className="w-20 p-1 border rounded-md"
                       />
                     </div>
-                  </div>
 
-                  {formData.numberOfKids > 0 && (
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-medium text-gray-700">Ages of Kids</h3>
-                      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">Below 12</label>
-                          <input
-                            type="number"
-                            name="kidsBelow12"
-                            value={formData.kidsAges.below12}
-                            onChange={handleInputChange}
-                            min="0"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">Below 5</label>
-                          <input
-                            type="number"
-                            name="kidsBelow5"
-                            value={formData.kidsAges.below5}
-                            onChange={handleInputChange}
-                            min="0"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700">Below 2</label>
-                          <input
-                            type="number"
-                            name="kidsBelow2"
-                            value={formData.kidsAges.below2}
-                            onChange={handleInputChange}
-                            min="0"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
-                          />
+                    {parseInt(formData.numberOfKids) > 0 && (
+                      <div className="space-y-2 pt-2 border-t">
+                        <h4 className="text-sm font-medium text-gray-700">Ages of Kids</h4>
+                        <div className="grid grid-cols-3 gap-2">
+                          <div>
+                            <label className="block text-xs text-gray-600">Below 12</label>
+                            <input
+                              type="number"
+                              name="kidsBelow12"
+                              value={formData.kidsAges.below12}
+                              onChange={handleInputChange}
+                              min="0"
+                              className="w-full p-1 border rounded-md"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-600">Below 5</label>
+                            <input
+                              type="number"
+                              name="kidsBelow5"
+                              value={formData.kidsAges.below5}
+                              onChange={handleInputChange}
+                              min="0"
+                              className="w-full p-1 border rounded-md"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-600">Below 2</label>
+                            <input
+                              type="number"
+                              name="kidsBelow2"
+                              value={formData.kidsAges.below2}
+                              onChange={handleInputChange}
+                              min="0"
+                              className="w-full p-1 border rounded-md"
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
-
-                  <div className="pt-4">
-                    <button
-                      type="submit"
-                      className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                      Submit Inquiry
-                    </button>
+                    )}
                   </div>
-                </form>
-              </div>
+                </div>
+              )}
             </div>
-          </div>
+
+            {/* Search Button */}
+            <button
+              type="submit"
+              className="bg-rose-500 hover:bg-rose-600 text-white p-4 rounded-full flex items-center justify-center transition-colors duration-200"
+            >
+              <FaSearch className="w-5 h-5" />
+            </button>
+          </form>
         </div>
       </div>
     </div>
